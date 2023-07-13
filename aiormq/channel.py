@@ -1,17 +1,16 @@
 import asyncio
 import io
 import logging
+import uuid
 from collections import OrderedDict
 from contextlib import suppress
 from functools import partial
 from io import BytesIO
-from random import getrandbits
 from types import MappingProxyType
 from typing import (
     Any, Awaitable, Callable, Dict, List, Mapping, Optional, Set, Tuple, Type,
     Union,
 )
-from uuid import UUID
 
 import pamqp.frame
 from pamqp import commands as spec
@@ -514,8 +513,7 @@ class Channel(Base, AbstractChannel):
     ) -> spec.Basic.ConsumeOk:
 
         consumer_tag = consumer_tag or "ctag%i.%s" % (
-            self.number,
-            UUID(int=getrandbits(128), version=4).hex,
+            self.number, uuid.uuid4().hex
         )
 
         if consumer_tag in self.consumers:
@@ -644,9 +642,7 @@ class Channel(Base, AbstractChannel):
         )
 
         if not content_header.properties.message_id:
-            # UUID compatible random bytes
-            rnd_uuid = UUID(int=getrandbits(128), version=4)
-            content_header.properties.message_id = rnd_uuid.hex
+            content_header.properties.message_id = uuid.uuid4().hex
 
         confirmation: Optional[ConfirmationType] = None
 
