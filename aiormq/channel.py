@@ -317,7 +317,7 @@ class Channel(Base, AbstractChannel):
         message_id = message.header.properties.message_id
 
         if message_id is None:
-            log.error("message_id if None on returned message %r", message)
+            log.error("message_id is None on returned message %r", message)
             return
 
         delivery_tag = self.message_id_delivery_tag.get(message_id)
